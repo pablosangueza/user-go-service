@@ -6,6 +6,10 @@ option go_package = "github.com/dom/user/api/dom/user/v1";
 
 service UserService {
   rpc SayHello(HelloRequest) returns (HelloReply) {}
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
 }
 
 message HelloRequest {
@@ -15,3 +19,54 @@ message HelloRequest {
 message HelloReply {
   string message = 1;
 }
+
+message CreateUserRequest {
+  string email = 2;
+  string user_name = 3;
+  string last_name = 4;
+  string role = 5;
+}
+
+message CreateUserResponse {
+  int32 user_id= 1;
+
+}
+
+message User{
+  int32 user_id = 1;
+  string email = 2;
+  string user_name = 3;
+  string last_name = 4;
+  string role = 5;
+}
+
+message GetUsersRequest {
+  int32 user_id = 1;
+}
+
+message GetUsersResponse {
+  repeated User users = 1;
+}
+
+message UpdateUserRequest {
+
+  int32 user_id = 1;
+  string email = 2;
+  string user_name = 3;
+  string last_name = 4;
+  string role = 5;
+
+}
+
+message UpdateUserResponse {
+  int64 rows_affected = 1;
+}
+
+message DeleteUserRequest {
+  int32 user_id = 1;
+}
+
+message DeleteUserResponse {
+  int64 rows_affected = 1;
+}
+

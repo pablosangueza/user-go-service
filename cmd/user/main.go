@@ -1,28 +1,41 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net"
 
+	pb "github.com/dom/user/api/dom/user/v1"
+
+	"github.com/dom/user/internal/config"
+	"github.com/dom/user/internal/database"
+	"github.com/dom/user/internal/rpc"
+	"github.com/dom/user/internal/users"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-type server struct{ pb.UnimplementedGreeterServer }
-
-func (s *server) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloReply, error) {
-	log.Printf("Received: %v", req.GetName())
-	return &pb.HelloReply{Message: "Hello " + req.GetName()}, nil
-}
-
 func main() {
+	cfg, err := config.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := database.OpenDB(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterGreeterServer(s, &server{})
+	pb.RegisterUserServiceServer(s, rpc.NewUserService(&rpc.UserSvcParams{
+		Querier: users.NewQuerier(db),
+		Cmd: &rpc.UserCommands{
+			CreateUser: users.NewUserCommand(db),
+		},
+	}))
 
 	reflection.Register(s)
 
