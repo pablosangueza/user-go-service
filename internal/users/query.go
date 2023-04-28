@@ -16,11 +16,11 @@ const (
 	getUsers = `SELECT u.user_id, u."user_name", u."last_name", u.email, u."role" FROM gouser u`
 )
 
-type Querier interface {
+type UserQuery interface {
 	GetUsers(ctx context.Context, id int32) ([]*pb.User, error)
 }
 
-func NewQuerier(db *sqlx.DB) Querier {
+func NewUserQuery(db *sqlx.DB) UserQuery {
 	return &querier{db}
 }
 

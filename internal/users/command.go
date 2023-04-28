@@ -15,24 +15,24 @@ const (
 	deleteUserCmd = `DELETE FROM gouser  WHERE user_id=$1;`
 )
 
-type SaveUserCommand interface {
+type UserCommand interface {
 	SaveUser(context.Context, User) (int, error)
 	UpdateUser(context.Context, User) (int64, error)
 	DeleteUser(context.Context, int) (int64, error)
 }
 
-type saveUserCommand struct {
+type userCommandDB struct {
 	db *sqlx.DB
 }
 
-func NewUserCommand(db *sqlx.DB) SaveUserCommand {
-	return &saveUserCommand{
+func NewUserCommand(db *sqlx.DB) UserCommand {
+	return &userCommandDB{
 		db: db,
 	}
 }
 
 // SaveUser implements SaveUserCommand
-func (s *saveUserCommand) SaveUser(ctx context.Context, user User) (int, error) {
+func (s *userCommandDB) SaveUser(ctx context.Context, user User) (int, error) {
 	var user_id int
 	err := s.db.QueryRowxContext(ctx, addUserCmd, user.UserName, user.LastName, user.Email, user.Role).Scan(&user_id)
 	if err != nil {
@@ -43,7 +43,7 @@ func (s *saveUserCommand) SaveUser(ctx context.Context, user User) (int, error) 
 }
 
 // UpdateUser implements SaveUserCommand
-func (s *saveUserCommand) UpdateUser(ctx context.Context, user User) (int64, error) {
+func (s *userCommandDB) UpdateUser(ctx context.Context, user User) (int64, error) {
 
 	res, err := s.db.ExecContext(ctx, updateUserCmd, user.UserName, user.LastName, user.Email, user.Role, user.UserId)
 	if err != nil {
@@ -56,7 +56,7 @@ func (s *saveUserCommand) UpdateUser(ctx context.Context, user User) (int64, err
 }
 
 // DeleteUser implements SaveUserCommand
-func (s *saveUserCommand) DeleteUser(ctx context.Context, userId int) (int64, error) {
+func (s *userCommandDB) DeleteUser(ctx context.Context, userId int) (int64, error) {
 
 	res, err := s.db.ExecContext(ctx, deleteUserCmd, userId)
 	if err != nil {
