@@ -31,10 +31,8 @@ func main() {
 	}
 	s := grpc.NewServer()
 	pb.RegisterUserServiceServer(s, rpc.NewUserService(&rpc.UserSvcParams{
-		Querier: users.NewQuerier(db),
-		Cmd: &rpc.UserCommands{
-			CreateUser: users.NewUserCommand(db),
-		},
+		Query: users.NewUserQuery(db),
+		Cmd:   users.NewUserCommand(db),
 	}))
 
 	reflection.Register(s)
