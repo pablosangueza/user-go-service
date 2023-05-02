@@ -48,7 +48,7 @@ func (s *userSvc) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*p
 		Role:     req.Role,
 	})
 	if err != nil {
-		log.Printf("UserService: %w", err)
+		log.Panic("UserService: %w", err)
 		return nil, err
 	}
 

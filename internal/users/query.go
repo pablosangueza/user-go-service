@@ -28,7 +28,6 @@ type querier struct {
 	db *sqlx.DB
 }
 
-// GetUserByEmail implements Querier
 func (q *querier) GetUsers(ctx context.Context, id int32) ([]*pb.User, error) {
 	var err error
 	var rows *sqlx.Rows

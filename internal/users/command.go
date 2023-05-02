@@ -31,7 +31,6 @@ func NewUserCommand(db *sqlx.DB) UserCommand {
 	}
 }
 
-// SaveUser implements SaveUserCommand
 func (s *userCommandDB) SaveUser(ctx context.Context, user User) (int, error) {
 	var user_id int
 	err := s.db.QueryRowxContext(ctx, addUserCmd, user.UserName, user.LastName, user.Email, user.Role).Scan(&user_id)
@@ -42,7 +41,6 @@ func (s *userCommandDB) SaveUser(ctx context.Context, user User) (int, error) {
 	return user_id, nil
 }
 
-// UpdateUser implements SaveUserCommand
 func (s *userCommandDB) UpdateUser(ctx context.Context, user User) (int64, error) {
 
 	res, err := s.db.ExecContext(ctx, updateUserCmd, user.UserName, user.LastName, user.Email, user.Role, user.UserId)
@@ -55,7 +53,6 @@ func (s *userCommandDB) UpdateUser(ctx context.Context, user User) (int64, error
 
 }
 
-// DeleteUser implements SaveUserCommand
 func (s *userCommandDB) DeleteUser(ctx context.Context, userId int) (int64, error) {
 
 	res, err := s.db.ExecContext(ctx, deleteUserCmd, userId)
